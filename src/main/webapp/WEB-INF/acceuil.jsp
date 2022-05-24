@@ -26,46 +26,33 @@
 							<table class="table table-striped table-bordered" style="width:100%">
 								<thead>
 						            <tr>
-						                <th>ID</th>
 						                <th>Nom</th>
 						                <th>Prenom</th>
-						                <th>Telephone</th>
 						                <th>Email</th>
+						                <th>Telephone</th>
+						                <th>Adresse</th>
 						                <th>Actions</th>
 						            </tr>
 						        </thead>
 							
 								<tbody>
+								<c:forEach var="contact" items="${contacts}">
 						            <tr>
-						                <td>1</td>
-						                <td>Takam</td>
-						                <td>Rushclin</td>
-						                <td>690139627</td>
-						                <td>takamrushclin@gmail.com</td>
+						                <td><c:out value="${contact.first_name}"/></td>
+						                <td><c:out value="${contact.last_name}"/></td>
+						                <td><c:out value="${contact.email}"/></td>
+						               <td><c:out value="${contact.phone}"/></td>
+						               <td><c:out value="${contact.adresse}"/></td>
 						                <td>
-						                	<a href="${pageContext.request.contextPath}/?action=edit" class="btn btn-outline-primary btn-circle btn-xs" title="Editer">
+						                	<a href="${pageContext.request.contextPath}/?action=edit&firstname=${contact.first_name}&lastname=${contact.last_name}&email=${contact.email}&phone=${contact.phone}&adresse=${contact.adresse}" class="btn btn-outline-primary btn-circle btn-xs" title="Editer">
 						                        <i class="fa fa-edit"></i>
 						                    </a>
-						                    <a href="#" class="btn btn-outline-danger btn-circle btn-xs" title="Supprimer">
+						                    <a href="${pageContext.request.contextPath}/?number=${contact.phone}" class="btn btn-outline-danger btn-circle btn-xs" title="Supprimer">
 						                        <i class="fa fa-times"></i>
 						                    </a>
 						                </td>
 						            </tr>
-						            <tr>
-						                <td>1</td>
-						                <td>Takam</td>
-						                <td>Rushclin</td>
-						                <td>690139627</td>
-						                <td>takamrushclin@gmail.com</td>
-						                <td>
-						                	<a href="" class="btn btn-outline-primary btn-circle btn-xs" title="Editer">
-						                        <i class="fa fa-edit"></i>
-						                    </a>
-						                    <a href="#" class="btn btn-outline-danger btn-circle btn-xs" title="Supprimer">
-						                        <i class="fa fa-times"></i>
-						                    </a>
-						                </td>
-						            </tr>
+						            </c:forEach>
 						        </tbody>
 						        <tfoot>
 						        	<tr class="text-center">
