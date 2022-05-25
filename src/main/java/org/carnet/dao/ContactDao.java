@@ -12,14 +12,13 @@ import java.util.List;
 import org.carnet.beans.Contacts;
 
 public class ContactDao {
-	
-	
+
 	public static Statement connexion() throws SQLException {
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/tpjava-iew", "root", "");
 		java.sql.Statement statement = connection.createStatement();
 		return statement;
 	}
-	
+
 	public static List<Contacts> getContact() throws Exception {
 		List<Contacts> listcontacts = new ArrayList<Contacts>();
 		ResultSet resultat = null;
@@ -60,7 +59,7 @@ public class ContactDao {
 
 			PreparedStatement preparedStatement = connection.prepareStatement(
 					"INSERT INTO contact(first_name,last_name,email,phone,adresse) VALUES(?,?,?,?,?)");
-			preparedStatement.setString(1,contact.getFirst_name());
+			preparedStatement.setString(1, contact.getFirst_name());
 			preparedStatement.setString(2, contact.getLast_name());
 			preparedStatement.setString(3, contact.getEmail());
 			preparedStatement.setString(4, contact.getPhone());
@@ -86,33 +85,37 @@ public class ContactDao {
 			PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM contact WHERE phone= ?");
 			preparedStatement.setString(1, id);
 			preparedStatement.executeUpdate();
-			
+
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 		} finally {
-			
+
 		}
 	}
 
 	public static List<Contacts> searchContact(String id) throws Exception {
 		List<Contacts> listcontacts = new ArrayList<Contacts>();
-		Connection connection = null;
 		java.sql.Statement statement = null;
 		ResultSet resultat = null;
 		Class.forName("com.mysql.jdbc.Driver");
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/tpjava-iew", "root", "");
 		try {
-			String search = "SELECT FROM contact WHERE first_name=" + id + " || last_name=" + id + " || email=" + id
-					+ " || phone =" + id + " || adresse=" + id;
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/tpjava-iew", "root", "");
-			statement = connection.createStatement();
-			resultat = statement.executeQuery(search);
+			System.out.println(id);
+			String search = "SELECT * FROM contact WHERE first_name=? || last_name=? || email=? || phone =? || adresse=?";
+			PreparedStatement preparedStatement = connection.prepareStatement(search);
+			preparedStatement.setString(1, id);
+			preparedStatement.setString(2, id);
+			preparedStatement.setString(3, id);
+			preparedStatement.setString(4, id);
+			preparedStatement.setString(5, id);
+			resultat = preparedStatement.executeQuery();
 			while (resultat.next()) {
 				Contacts contact = new Contacts();
 				contact.setFirst_name(resultat.getString("first_name"));
 				contact.setLast_name(resultat.getString("last_name"));
 				contact.setAdresse(resultat.getString("adresse"));
 				contact.setEmail(resultat.getString("email"));
-				contact.setAdresse(resultat.getString("phone"));
+				contact.setPhone(resultat.getString("phone"));
 				listcontacts.add(contact);
 				System.out.println(resultat.getString("first_name"));
 				;
@@ -121,7 +124,6 @@ public class ContactDao {
 			System.out.print(e.getMessage());
 		} finally {
 			resultat.close();
-			statement.close();
 			connection.close();
 		}
 
@@ -131,21 +133,20 @@ public class ContactDao {
 
 	public static void updateContact(Contacts contact) throws Exception {
 		Connection connection = null;
-		java.sql.Statement statement = null;
-		ResultSet resultat = null;
 		Class.forName("com.mysql.jdbc.Driver");
 		try {
-			
-			String update = "UPDATE contact SET first_name = ? ,last_name = ?,email= ?,phone= ?,adresse = ? WHERE phone = ?" ;
+
+			String update = "UPDATE contact SET first_name = ? ,last_name = ?,email= ?,phone= ?,adresse = ? WHERE phone = ?";
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/tpjava-iew", "root", "");
 			PreparedStatement preparedStatement = connection.prepareStatement(update);
 			preparedStatement.setString(1, contact.getFirst_name());
 			preparedStatement.setString(2, contact.getLast_name());
 			preparedStatement.setString(3, contact.getEmail());
-			preparedStatement.setString(4, contact.getPhone());
+			preparedStatement.setString(4, contact.getPhone().trim());
 			preparedStatement.setString(5, contact.getAdresse());
-			preparedStatement.setString(6, contact.getPhone());
-			System.out.println(contact.getPhone());
+			preparedStatement.setString(6, contact.getPhone().trim());
+			System.out.println(contact.getAdresse());
+			System.out.println("__________________________________________________________________________________________________");
 			preparedStatement.executeUpdate();
 		} catch (Exception e) {
 			System.out.print(e.getMessage());

@@ -34,7 +34,9 @@ public class ControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// On recupere l'action
 		String action = request.getParameter("action");
+		String search = request.getParameter("search");
 		if (action == null) {
+
 			String number = request.getParameter("number");
 			if (number != null) {
 				try {
@@ -45,18 +47,31 @@ public class ControllerServlet extends HttpServlet {
 				}
 			}
 			// ici on recupere les contacts dans la base de donnees
-			try {
-				ContactDao.getContact();
-				request.setAttribute("contacts", ContactDao.getContact());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (search != null) {
+				System.out.println("searchhhhhhhhhhhhhhhhhhhhhhhhhhh");
+				ServletContext sc = getServletContext();
+				RequestDispatcher rd = sc.getRequestDispatcher("/WEB-INF/acceuil.jsp");
+				try {
+					request.setAttribute("contacts", ContactDao.searchContact(request.getParameter("search")));
+					rd.forward(request, response);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					request.setAttribute("contacts", ContactDao.getContact());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// Ici, on est sur la page d'acceui et on doit lister les contacts
+				System.out.println(action);
+				ServletContext sc = getServletContext();
+				RequestDispatcher rd = sc.getRequestDispatcher("/WEB-INF/acceuil.jsp");
+				rd.forward(request, response);
 			}
-			// Ici, on est sur la page d'acceui et on doit lister les contacts
-			System.out.println(action);
-			ServletContext sc = getServletContext();
-			RequestDispatcher rd = sc.getRequestDispatcher("/WEB-INF/acceuil.jsp");
-			rd.forward(request, response);
+
 		} else if (action.equals("new")) {
 			ServletContext sc = getServletContext();
 			RequestDispatcher rd = sc.getRequestDispatcher("/WEB-INF/nouveauContact.jsp");
@@ -75,27 +90,6 @@ public class ControllerServlet extends HttpServlet {
 			RequestDispatcher rd = sc.getRequestDispatcher("/WEB-INF/editerContact.jsp");
 			rd.forward(request, response);
 
-		} else if (action.equals("search")) {
-
-			ServletContext sc = getServletContext();
-			RequestDispatcher rd = sc.getRequestDispatcher("accueil.jsp");
-			rd.forward(request, response);
-			try {
-				ContactDao.searchContact(request.getParameter("params"));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else if (action.equals("remove")) {
-			ServletContext sc = getServletContext();
-			RequestDispatcher rd = sc.getRequestDispatcher("accueil.jsp");
-			rd.forward(request, response);
-			try {
-				ContactDao.deleteContact(request.getParameter("number"));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 	}
@@ -122,16 +116,23 @@ public class ControllerServlet extends HttpServlet {
 			contact.setPhone(phone);
 			try {
 				ContactDao.registerContact(contact);
-				this.getServletContext().getRequestDispatcher("/WEB-INF/success.jsp").forward(request, response);
+				try {
+					ContactDao.getContact();
+					request.setAttribute("contacts", ContactDao.getContact());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				this.getServletContext().getRequestDispatcher("/WEB-INF/acceuil.jsp").forward(request, response);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				this.getServletContext().getRequestDispatcher("/WEB-INF/404.jsp").forward(request, response);
 			}
 		}
-		
-		if(action.equals("edit")) {
-			
+
+		if (action.equals("edit")) {
+
 			String nom = request.getParameter("firstname");
 			String prenom = request.getParameter("lastname");
 			String adresse = request.getParameter("adresse");
@@ -142,10 +143,19 @@ public class ControllerServlet extends HttpServlet {
 			contact.setLast_name(prenom);
 			contact.setAdresse(adresse);
 			contact.setEmail(email);
-			contact.setPhone(phone);
+			contact.setPhone(phone.trim());
 			try {
+
 				ContactDao.updateContact(contact);
-				this.getServletContext().getRequestDispatcher("/WEB-INF/success.jsp").forward(request, response);
+				try {
+					ContactDao.getContact();
+					request.setAttribute("contacts", ContactDao.getContact());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				this.getServletContext().getRequestDispatcher("/WEB-INF/acceuil.jsp").forward(request, response);
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

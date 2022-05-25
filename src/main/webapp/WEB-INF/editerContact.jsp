@@ -24,7 +24,7 @@
 							<strong>Editer un contact</strong>
 						</div>
 						<div class="card-body">
-							<form method="post">
+							<form method="post" action="/TP5/?action=edit">
 								 <div class="form-group row">
 				                    <label for="nom" class="col-md-3 col-form-label">Nom du contact</label>
 				                    <div class="col-md-9">
